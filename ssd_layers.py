@@ -30,7 +30,7 @@ def dropout(x, rate=0.5, is_training=True):
     return tf.layers.dropout(x, rate=rate, training=is_training)
 
 
-def l2norm(x, scale, trainable=True, scope="L2_Normalization"):
+def l2norm(x, scale, trainable=True, scope="L2Normalization"):
     """L2 Normalization (not batch norm, spatial normalization)"""
     n_channels = x.get_shape().as_list()[-1]
     l2_norm = tf.nn.l2_normalize(x, [3], epsilon=1e-12)

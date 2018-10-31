@@ -8,7 +8,7 @@ from ssd_300_vgg import SSD
 def main():
     ssd = SSD()
 
-    ckpt_filename = './ssd_checkpoints/ssd_300_vgg.ckpt/ssd_300_vgg.ckpt'
+    ckpt_filename = './model/ssd_checkpoints/ssd_vgg_300_weights.ckpt'
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
         saver = tf.train.Saver()

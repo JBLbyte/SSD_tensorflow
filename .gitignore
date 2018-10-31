@@ -106,8 +106,10 @@ venv.bak/
 # custom
 *.jpg
 *.png
+*.zip
+*.rar
 .DS_Store
 .idea
-ssd_checkpoints
+/model/ssd_checkpoints
 /ref
 /data
