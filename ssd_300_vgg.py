@@ -7,7 +7,7 @@ from pprint import pprint
 import tensorflow as tf
 from collections import namedtuple
 from ssd_layers import conv2d, max_pool2d, l2norm, dropout, pad2d, ssd_multibox_layer
-from ssd_anchors import ssd_size_bounds_to_values, ssd_anchor_all_layers
+from ssd_anchors import ssd_size_bounds_to_values, ssd_anchors_all_layers
 
 
 # SSD parameters
@@ -23,6 +23,7 @@ ssd_params = namedtuple('ssd_params', ['img_shape',             # the input imag
                                        'anchor_offset',         # the center point offset
                                        'normalizations',        # list of normalizations of layers for detection
                                        'prior_scaling'])
+
 
 class SSD(object):
     """SSD-Net-300"""
@@ -55,7 +56,7 @@ class SSD(object):
         predictions, logits, locations = self._built_net()
         print('predictions_shape: {}'.format(predictions[0].get_shape()))
         print('logits_shape:      {}'.format(logits[0].get_shape()))
-        print('locations_shape:   {}'.format(locations[0].get_shape()))
+        print('locations_shape:   {}\n'.format(locations[0].get_shape()))
         # self._update_feat_shapes_from_net(predictions)
         classes, scores, bboxes = self._bboxes_select(predictions, locations)
         self._classes = classes
@@ -150,13 +151,13 @@ class SSD(object):
 
     def anchors(self):
         """Get SSD anchors"""
-        return ssd_anchor_all_layers(self.ssd_params.img_shape,
-                                     self.ssd_params.feat_shapes,
-                                     self.ssd_params.anchor_sizes,
-                                     self.ssd_params.anchor_ratios,
-                                     self.ssd_params.anchor_steps,
-                                     self.ssd_params.anchor_offset,
-                                     np.float32)
+        return ssd_anchors_all_layers(self.ssd_params.img_shape,
+                                      self.ssd_params.feat_shapes,
+                                      self.ssd_params.anchor_sizes,
+                                      self.ssd_params.anchor_ratios,
+                                      self.ssd_params.anchor_steps,
+                                      self.ssd_params.anchor_offset,
+                                      np.float32)
 
     def _bboxes_decode_layer(self, feat_locations, anchor_bboxes, prior_scaling):
         """Decode the feat location of one layer
@@ -204,11 +205,14 @@ class SSD(object):
     def _bboxes_select(self, predictions, locations):
         """Select all bboxes predictions, only for batch_size=1"""
         anchor_bboxes_list = self.anchors()
-        y, x, h, w = anchor_bboxes_list[0]
-        print('anchor_bboxes_y_shape: {}'.format(y.shape))
-        print('anchor_bboxes_x_shape: {}'.format(x.shape))
-        print('anchor_bboxes_h_shape: {}'.format(h.shape))
-        print('anchor_bboxes_w_shape: {}'.format(w.shape))
+        for i, (y, x, h, w) in enumerate(anchor_bboxes_list):
+            # y, x, h, w = anchor_bboxes_list[0]
+            print('anchor_bboxes_index:   {}'.format(i+1))
+            print('anchor_bboxes_y_shape: {}'.format(y.shape))
+            print('anchor_bboxes_x_shape: {}'.format(x.shape))
+            print('anchor_bboxes_h_shape: {}'.format(h.shape))
+            print('anchor_bboxes_w_shape: {}'.format(w.shape))
+            print()
         classes_list = []
         scores_list = []
         bboxes_list = []
@@ -236,4 +240,4 @@ if __name__ == '__main__':
     ssd = SSD()
     with tf.Session() as sess:
         saver = tf.train.Saver()
-        saver.restore(sess, './ssd/ssd_checkpoints/ssd_300_vgg.ckpt/ssd_300_vgg.ckpt')
+        saver.restore(sess, './model/ssd_checkpoints/ssd_vgg_300_weights.ckpt')

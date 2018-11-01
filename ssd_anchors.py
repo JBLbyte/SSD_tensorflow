@@ -28,13 +28,13 @@ def ssd_size_bounds_to_values(size_bounds, n_feat_layers, img_shape=(300, 300)):
     return sizes
 
 
-def ssd_anchor_one_layer(img_shape,
-                         feat_shape,
-                         sizes,
-                         ratios,
-                         step,
-                         offset=0.5,
-                         dtype=np.float32):
+def ssd_anchors_one_layer(img_shape,
+                          feat_shape,
+                          sizes,
+                          ratios,
+                          step,
+                          offset=0.5,
+                          dtype=np.float32):
     """Compute SSD default anchor boxes for one feature layer.
 
     Determine the relative position grid of the centers, and the relative width and height.
@@ -78,23 +78,23 @@ def ssd_anchor_one_layer(img_shape,
     return y, x, h, w
 
 
-def ssd_anchor_all_layers(img_shape,
-                          layers_shapes,
-                          anchor_sizes,
-                          anchor_ratios,
-                          anchor_steps,
-                          offset=0.5,
-                          dtype=np.float32):
+def ssd_anchors_all_layers(img_shape,
+                           layers_shapes,
+                           anchor_sizes,
+                           anchor_ratios,
+                           anchor_steps,
+                           offset=0.5,
+                           dtype=np.float32):
     """Compute anchor boxes for all feature layers
     """
     layers_anchors = []
     for i, layer_shape in enumerate(layers_shapes):
-        anchor_bboxes = ssd_anchor_one_layer(img_shape,
-                                             layer_shape,
-                                             anchor_sizes[i],
-                                             anchor_ratios[i],
-                                             anchor_steps[i],
-                                             offset=offset,
-                                             dtype=dtype)
+        anchor_bboxes = ssd_anchors_one_layer(img_shape,
+                                              layer_shape,
+                                              anchor_sizes[i],
+                                              anchor_ratios[i],
+                                              anchor_steps[i],
+                                              offset=offset,
+                                              dtype=dtype)
         layers_anchors.append(anchor_bboxes)
     return layers_anchors
